@@ -500,15 +500,15 @@ func (w *inotify) handleEvent(inEvent *unix.InotifyEvent, buf *[65536]byte, offs
 			// watch. I have some code for this in my kqueue refactor we can use
 			// in the future. For now I'm okay with this as it's not publicly
 			// available. Correctness first, performance second.
-			if ev.renamedFrom != "" {
+			if ev.RenamedFrom != "" {
 				for path, wd := range w.watches.path {
 					if wd == watch.wd || path == ev.Name {
 						continue
 					}
 
-					if hasPathPrefix(path, ev.renamedFrom) {
+					if hasPathPrefix(path, ev.RenamedFrom) {
 						delete(w.watches.path, path)
-						path = strings.Replace(path, ev.renamedFrom, ev.Name, 1)
+						path = strings.Replace(path, ev.RenamedFrom, ev.Name, 1)
 						w.watches.path[path] = wd
 
 						ww := w.watches.wd[wd]
@@ -581,7 +581,7 @@ func (w *inotify) newEvent(name string, mask, cookie uint32) Event {
 				}
 			}
 			w.cookiesMu.Unlock()
-			e.renamedFrom = prev
+			e.RenamedFrom = prev
 		}
 	}
 	return e
